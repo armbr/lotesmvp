@@ -28,9 +28,8 @@ export default function SignaturePad({ documentoId, pdfUrl, onComplete }: any) {
         height: 100,
       })
       const modified = await pdfDoc.save()
-      // `modified` is a Uint8Array but TypeScript's DOM types may disagree;
-      // cast to `any` to satisfy the compiler while keeping runtime behavior.
-      const blob = new Blob([modified as Uint8Array], { type: 'application/pdf' })
+      // Cast to any to avoid TypeScript DOM type conflicts with pdf-lib output
+      const blob = new Blob([modified as any], { type: 'application/pdf' })
       const path = `documentos_assinados/${documentoId}-${Date.now()}.pdf`
       const { error } = await supabase.storage.from('documentos').upload(path, blob)
       if (!error) {
