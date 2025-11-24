@@ -1,0 +1,19 @@
+services:
+  app:
+    # Diz ao Docker Compose para CONSTRUIR a imagem
+    # usando o Dockerfile que está no diretório atual (o ponto).
+    build: .
+    
+    # Mapeamento das portas: [NA SUA MÁQUINA]:[NO CONTAINER]
+    ports:
+      - "3000:3000"
+    
+      
+    # O comando que será executado ao iniciar o container.
+    command: npm run dev
+    
+    # Carrega variáveis de ambiente
+    env_file:
+      - .env.local
+
+    restart: "unless-stopped"
