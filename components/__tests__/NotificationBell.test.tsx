@@ -1,19 +1,41 @@
-import { render } from '@testing-library/react'
+import { render, screen } from '@testing-library/react'
 import NotificationBell from '../NotificationBell'
+import * as NotificationsProvider from '../NotificationsProvider'
+
+// Mock the useNotifications hook
+jest.spyOn(NotificationsProvider, 'useNotifications')
 
 describe('NotificationBell Component', () => {
-  it('renders notification count', () => {
-    const { container } = render(<NotificationBell unread={5} />)
-    expect(container.textContent).toContain('5')
+  it('renders notification count badge when unread > 0', () => {
+    (NotificationsProvider.useNotifications as jest.Mock).mockReturnValue({
+      notifications: [],
+      unread: 5,
+      refresh: jest.fn(),
+    })
+
+    render(<NotificationBell />)
+    expect(screen.getByText('5')).toBeInTheDocument()
   })
 
-  it('renders zero notifications', () => {
-    const { container } = render(<NotificationBell unread={0} />)
-    expect(container).toBeInTheDocument()
+  it('does not render badge when unread is 0', () => {
+    (NotificationsProvider.useNotifications as jest.Mock).mockReturnValue({
+      notifications: [],
+      unread: 0,
+      refresh: jest.fn(),
+    })
+
+    const { container } = render(<NotificationBell />)
+    expect(container.querySelector('.bg-red-600')).not.toBeInTheDocument()
   })
 
   it('handles large notification counts', () => {
-    const { container } = render(<NotificationBell unread={99} />)
-    expect(container.textContent).toContain('99')
+    (NotificationsProvider.useNotifications as jest.Mock).mockReturnValue({
+      notifications: [],
+      unread: 99,
+      refresh: jest.fn(),
+    })
+
+    render(<NotificationBell />)
+    expect(screen.getByText('99')).toBeInTheDocument()
   })
 })
